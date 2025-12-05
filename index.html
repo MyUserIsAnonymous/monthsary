@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Love for Gigi ♥</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff9fb;
+            color: #555;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Section */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(255, 240, 245, 0.9) 0%, rgba(255, 228, 235, 0.9) 100%);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hearts-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.3;
+        }
+
+        .heart {
+            position: absolute;
+            color: #ffb6c1;
+            font-size: 24px;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        header h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4rem;
+            color: #e75480;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .months-counter {
+            font-size: 1.5rem;
+            color: #ff69b4;
+            background-color: white;
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 50px;
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(255, 105, 180, 0.2);
+            position: relative;
+            z-index: 1;
+            border: 2px dashed #ffb6c1;
+        }
+
+        .months-counter i {
+            margin-right: 10px;
+            color: #ff69b4;
+        }
+
+        /* Main Content */
+        .content-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 20px;
+            padding: 30px;
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+            box-shadow: 0 8px 20px rgba(255, 182, 193, 0.15);
+            border: 1px solid #ffe4e9;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(255, 182, 193, 0.25);
+        }
+
+        .card h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: #e75480;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .card i {
+            color: #ffb6c1;
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .message-box {
+            background-color: #fff5f7;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid #ffb6c1;
+            margin-top: 20px;
+            font-style: italic;
+        }
+
+        /* Photo Gallery */
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .photo-frame {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.2);
+            height: 250px;
+            position: relative;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .photo-frame:hover img {
+            transform: scale(1.05);
+        }
+
+        .photo-frame:after {
+            content: "♥";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #ff69b4;
+            font-size: 24px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Memory Timeline */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 40px auto;
+        }
+
+        .timeline:before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background-color: #ffb6c1;
+        }
+
+        .timeline-item {
+            margin-bottom: 40px;
+            position: relative;
+            width: 50%;
+            padding: 20px;
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+
+        .timeline-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.2);
+            position: relative;
+        }
+
+        .timeline-content:after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            transform: rotate(45deg);
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content:after {
+            right: -10px;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content:after {
+            left: -10px;
+        }
+
+        .timeline-date {
+            font-weight: 600;
+            color: #ff69b4;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .timeline-date i {
+            margin-right: 10px;
+        }
+
+        /* Love Note */
+        .love-note {
+            background-color: #fff0f5;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin: 40px 0;
+            border: 2px dashed #ffb6c1;
+        }
+
+        .love-note h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: #e75480;
+            margin-bottom: 20px;
+        }
+
+        .love-note p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+
+        .signature {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: #ff69b4;
+            margin-top: 20px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #e75480;
+            background-color: white;
+            border-radius: 20px;
+            margin-top: 40px;
+            box-shadow: 0 -5px 15px rgba(255, 182, 193, 0.1);
+        }
+
+        .heartbeat {
+            font-size: 2rem;
+            color: #ff69b4;
+            animation: heartbeat 1.5s infinite;
+            margin-bottom: 10px;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 3rem;
+            }
+            
+            .timeline:before {
+                left: 20px;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                left: 0 !important;
+                padding-left: 50px;
+            }
+            
+            .timeline-item:nth-child(even) .timeline-content:after,
+            .timeline-item:nth-child(odd) .timeline-content:after {
+                left: -10px;
+                right: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header>
+            <div class="hearts-bg" id="heartsContainer"></div>
+            <h1>Happy Monthsary, My Gigi!</h1>
+            <div class="months-counter">
+                <i class="fas fa-heart"></i>
+                <span id="monthsCount">0</span> Beautiful Months Together
+            </div>
+            <p>Every moment with you is a precious memory I cherish</p>
+        </header>
+
+        <!-- Content Section -->
+        <section class="content-section">
+            <div class="card">
+                <h2>To My Dearest Gigi</h2>
+                <p><i class="fas fa-heart"></i> You are the most beautiful person I've ever known, inside and out.</p>
+                <p><i class="fas fa-heart"></i> Your smile brightens my darkest days and fills my heart with joy.</p>
+                <p><i class="fas fa-heart"></i> I'm grateful for every laugh, every conversation, and every moment we share.</p>
+                <p><i class="fas fa-heart"></i> With you, I've found a love I never knew existed.</p>
+                
+                <div class="message-box">
+                    "My love for you grows stronger with each passing day. 
+                    You're my favorite thought in the morning and my last thought at night."
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>What I Love About You</h2>
+                <p><i class="fas fa-star"></i> Your kindness that knows no bounds</p>
+                <p><i class="fas fa-star"></i> The way your eyes light up when you're happy</p>
+                <p><i class="fas fa-star"></i> Your laughter that's more beautiful than any music</p>
+                <p><i class="fas fa-star"></i> How you always know what to say to make me feel better</p>
+                <p><i class="fas fa-star"></i> Your intelligence and passion for life</p>
+                <p><i class="fas fa-star"></i> The way you make ordinary moments feel magical</p>
+                <p><i class="fas fa-star"></i> Your unwavering support and belief in me</p>
+                <p><i class="fas fa-star"></i> Simply everything about you</p>
+            </div>
+        </section>
+
+        <!-- Photo Gallery -->
+        <h2 style="text-align: center; font-family: 'Dancing Script', cursive; font-size: 3rem; color: #e75480; margin: 40px 0;">Our Beautiful Memories</h2>
+        <div class="photo-gallery">
+            <div class="photo-frame">
+                <img src="https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Romantic memory">
+            </div>
+            <div class="photo-frame">
+                <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Happy moment">
+            </div>
+            <div class="photo-frame">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Together forever">
+            </div>
+            <div class="photo-frame">
+                <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Special day">
+            </div>
+        </div>
+
+        <!-- Memory Timeline -->
+        <h2 style="text-align: center; font-family: 'Dancing Script', cursive; font-size: 3rem; color: #e75480; margin: 60px 0 40px;">Our Journey Together</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-date"><i class="far fa-calendar-alt"></i> The Day We Met</div>
+                    <p>I still remember the first time I saw you. My heart skipped a beat and I knew my life would never be the same.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-date"><i class="far fa-calendar-alt"></i> Our First Date</div>
+                    <p>That magical evening when we talked for hours and I realized I never wanted to stop talking to you.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-date"><i class="far fa-calendar-alt"></i> When You Became My Girlfriend</div>
+                    <p>The happiest day of my life when you said "yes" and officially became mine.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <div class="timeline-date"><i class="far fa-calendar-alt"></i> Today</div>
+                    <p>Every day with you feels like a blessing. I fall in love with you more and more each moment.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Love Note -->
+        <div class="love-note">
+            <h2>My Promise to You</h2>
+            <p>
+                My dearest Gigi, on this special day, I want to promise you that I will always cherish you, 
+                support you, and love you with all my heart. I will be there for you in good times and bad, 
+                to celebrate your joys and comfort you in sorrow. I promise to make you smile every day, 
+                to listen to you, to respect you, and to always be honest with you. 
+                You are my greatest blessing, and I will spend the rest of my life showing you how much you mean to me.
+            </p>
+            <div class="signature">Forever yours,</div>
+            <div class="heartbeat"><i class="fas fa-heart"></i></div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="heartbeat"><i class="fas fa-heart"></i></div>
+            <p>Made with endless love for my beautiful Gigi</p>
+            <p>Every month with you is a treasure ♥</p>
+            <p>Happy Monthsary, my love!</p>
+        </footer>
+    </div>
+
+    <script>
+        // Generate floating hearts in background
+        function createHearts() {
+            const heartsContainer = document.getElementById('heartsContainer');
+            const heartCount = 25;
+            
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.innerHTML = '♥';
+                heart.style.left = `${Math.random() * 100}%`;
+                heart.style.top = `${Math.random() * 100}%`;
+                heart.style.animationDelay = `${Math.random() * 5}s`;
+                heart.style.fontSize = `${Math.random() * 20 + 15}px`;
+                heart.style.opacity = `${Math.random() * 0.5 + 0.3}`;
+                heartsContainer.appendChild(heart);
+            }
+        }
+
+        // Calculate months together (assuming they started dating on a specific date)
+        function calculateMonthsTogether() {
+            // You can change this date to your actual anniversary
+            const anniversaryDate = new Date('2023-11-01');
+            const currentDate = new Date();
+            
+            let months = (currentDate.getFullYear() - anniversaryDate.getFullYear()) * 12;
+            months -= anniversaryDate.getMonth();
+            months += currentDate.getMonth();
+            
+            return months <= 0 ? 0 : months;
+        }
+
+        // Update months counter with animation
+        function updateMonthsCounter() {
+            const monthsCount = calculateMonthsTogether();
+            const counterElement = document.getElementById('monthsCount');
+            let currentCount = 0;
+            
+            const interval = setInterval(() => {
+                if (currentCount < monthsCount) {
+                    currentCount++;
+                    counterElement.textContent = currentCount;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 100);
+        }
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            createHearts();
+            updateMonthsCounter();
+            
+            // Add click effect to hearts
+            document.querySelectorAll('.heart').forEach(heart => {
+                heart.addEventListener('click', function() {
+                    this.style.color = '#ff69b4';
+                    this.style.transform = 'scale(1.5)';
+                    setTimeout(() => {
+                        this.style.color = '#ffb6c1';
+                        this.style.transform = 'scale(1)';
+                    }, 300);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
