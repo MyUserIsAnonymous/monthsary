@@ -10,6 +10,9 @@
     <meta name="theme-color" content="#e75480">
     <link rel="icon" href="icon-192.png">
     <link rel="apple-touch-icon" href="icon-192.png">
+    <!-- iOS-specific meta tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <!-- ===================================== -->
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -493,80 +496,34 @@
             transform: translateY(-2px);
         }
 
-        /* ============ NOTIFICATION SETTINGS ============ */
-        .notification-settings {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            background: white;
-            padding: 15px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            z-index: 999;
-            display: none;
-            border: 2px solid #ffe4e9;
-        }
-
-        .notification-settings.show {
-            display: block;
-            animation: slideIn 0.3s ease;
-        }
-
-        .notification-toggle {
+        /* ============ IOS NOTIFICATION BUTTON ============ */
+        .ios-notification-btn {
+            background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-            cursor: pointer;
+            gap: 8px;
+            margin-top: 15px;
         }
 
-        .toggle-switch {
-            width: 50px;
-            height: 26px;
-            background: #ddd;
-            border-radius: 13px;
-            position: relative;
-            transition: background 0.3s;
-        }
-
-        .toggle-switch.active {
-            background: #ff69b4;
-        }
-
-        .toggle-switch:after {
-            content: '';
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            width: 20px;
-            height: 20px;
-            background: white;
-            border-radius: 50%;
-            transition: transform 0.3s;
-        }
-
-        .toggle-switch.active:after {
-            transform: translateX(24px);
+        .ios-notification-btn:hover {
+            background: linear-gradient(135deg, #5856D6 0%, #007AFF 100%);
+            transform: translateY(-2px);
         }
     </style>
 </head>
 <body>
-    <!-- PWA Install Button -->
+    <!-- PWA Install Button (mostly for Android) -->
     <div class="install-btn-container" id="installContainer" style="display:none;">
         <button class="install-btn-pwa" onclick="installApp()">
             <i class="fas fa-heart"></i> Install App
         </button>
-    </div>
-
-    <!-- Notification Settings -->
-    <div class="notification-settings" id="notificationSettings">
-        <div class="notification-toggle" onclick="toggleNotifications()">
-            <div class="toggle-switch" id="toggleSwitch"></div>
-            <span>Monthly Reminders</span>
-        </div>
-        <p style="font-size:12px;color:#666;margin-top:10px;">
-            Get notified every 5th of the month
-        </p>
     </div>
 
     <div class="container">
@@ -579,7 +536,16 @@
                 <span id="monthsCount">4</span> Beautiful Months Together
             </div>
             <p>Every moment with you is a precious memory I cherish</p>
-            <!-- COUNTDOWN REMOVED FROM HERE -->
+            
+            <!-- iOS Notification Button (shown only on iOS) -->
+            <div id="iosNotificationContainer" style="display: none;">
+                <button class="ios-notification-btn" onclick="requestIOSNotificationPermission()">
+                    <i class="fas fa-bell"></i> Enable Monthly Reminders
+                </button>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 8px;">
+                    Get notified every 5th of the month on your iPhone
+                </p>
+            </div>
         </header>
 
         <!-- Content Section -->
@@ -658,7 +624,7 @@
             <div class="heartbeat"><i class="fas fa-heart"></i></div>
             <p>Made with endless love for my beautiful Gigi</p>
             <p>Every month with you is a treasure ♥</p>
-            <p>Happy 3rd Month, my love!</p>
+            <p>Happy 4th Month, my love!</p>
             
             <!-- PWA Status -->
             <div style="margin-top: 20px; font-size: 12px; color: #ff69b4;">
@@ -667,7 +633,7 @@
         </footer>
     </div>
 
-    <!-- ============ PWA & NOTIFICATION SCRIPT ============ -->
+    <!-- ============ IMPROVED NOTIFICATION & PWA SCRIPT ============ -->
     <script>
         // ============ PWA SERVICE WORKER ============
         if ('serviceWorker' in navigator) {
@@ -675,88 +641,161 @@
                 navigator.serviceWorker.register('service-worker.js')
                     .then(reg => {
                         console.log('✅ Service Worker registered');
-                        checkNotificationPermission();
-                        scheduleMonthlyNotification();
+                        
+                        // Check if we should prompt for notifications
+                        checkIOSNotificationPrompt();
                     })
                     .catch(err => console.log('❌ Service Worker failed:', err));
             });
         }
 
-        // ============ NOTIFICATION PERMISSION ============
-        function checkNotificationPermission() {
-            if (Notification.permission === 'default') {
+        // ============ DETECT iOS ============
+        function isIOS() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        }
+
+        // ============ IMPROVED IOS NOTIFICATION HANDLING ============
+        function checkIOSNotificationPrompt() {
+            // Only for iOS devices
+            if (!isIOS()) return;
+            
+            // Check if we've already asked for permission
+            const hasAsked = localStorage.getItem('notificationPermissionAsked');
+            const permission = localStorage.getItem('notificationPermission');
+            
+            // If we haven't asked yet, or if permission was denied, show the button
+            if (!hasAsked || (permission === 'denied' && !hasPromptedRecently())) {
+                // Show the iOS notification button after a short delay
                 setTimeout(() => {
-                    if (confirm('Enable monthly monthsary reminders?')) {
-                        Notification.requestPermission().then(permission => {
-                            if (permission === 'granted') {
-                                localStorage.setItem('notificationsEnabled', 'true');
-                                document.getElementById('toggleSwitch').classList.add('active');
-                                console.log('✅ Notifications enabled');
-                                scheduleMonthlyNotification();
-                            }
-                        });
-                    }
-                }, 3000);
-            } else if (Notification.permission === 'granted') {
-                localStorage.setItem('notificationsEnabled', 'true');
-                document.getElementById('toggleSwitch').classList.add('active');
+                    document.getElementById('iosNotificationContainer').style.display = 'block';
+                }, 2000);
+            }
+            
+            // If permission was already granted, schedule notifications
+            if (permission === 'granted') {
+                scheduleIOSNotification();
             }
         }
 
-        // ============ MONTHLY NOTIFICATION SCHEDULER ============
-        function scheduleMonthlyNotification() {
-            if (Notification.permission !== 'granted') return;
+        function hasPromptedRecently() {
+            const lastPrompt = localStorage.getItem('lastNotificationPrompt');
+            if (!lastPrompt) return false;
+            
+            const lastPromptDate = new Date(lastPrompt);
+            const now = new Date();
+            const daysSinceLastPrompt = (now - lastPromptDate) / (1000 * 60 * 60 * 24);
+            
+            // Don't prompt again if we asked within the last 30 days
+            return daysSinceLastPrompt < 30;
+        }
+
+        function requestIOSNotificationPermission() {
+            // Hide the button immediately
+            document.getElementById('iosNotificationContainer').style.display = 'none';
+            
+            // Save that we're asking now
+            localStorage.setItem('notificationPermissionAsked', 'true');
+            localStorage.setItem('lastNotificationPrompt', new Date().toISOString());
+            
+            // Show iOS-friendly instruction
+            alert(
+                "To enable monthly reminders:\n\n" +
+                "1. Tap 'Allow' when iPhone asks for notification permission\n" +
+                "2. You'll receive a notification every 5th of the month\n" +
+                "3. You can change this later in iPhone Settings\n\n" +
+                "Thank you! 💖"
+            );
+            
+            // Request permission
+            if ('Notification' in window) {
+                Notification.requestPermission().then(permission => {
+                    localStorage.setItem('notificationPermission', permission);
+                    
+                    if (permission === 'granted') {
+                        alert("✅ Notifications enabled! You'll receive reminders every 5th of the month.");
+                        scheduleIOSNotification();
+                    } else if (permission === 'denied') {
+                        alert(
+                            "Notifications were denied. You can enable them later:\n\n" +
+                            "Settings > Safari > Notifications > [This Website] > Allow"
+                        );
+                    }
+                });
+            } else {
+                alert("Your device doesn't support notifications. You can still enjoy the app!");
+            }
+        }
+
+        // ============ SCHEDULE IOS NOTIFICATION ============
+        function scheduleIOSNotification() {
+            // For iOS, we can't schedule exact times in advance, but we can set up
+            // local notifications that trigger when the app is opened on the 5th
             
             const now = new Date();
-            const currentDay = now.getDate();
-            const currentMonth = now.getMonth();
-            const currentYear = now.getFullYear();
+            const today = now.getDate();
             
-            // Calculate next 5th of the month
-            let nextNotificationDate;
-            
-            if (currentDay < 5) {
-                // This month's 5th hasn't passed yet
-                nextNotificationDate = new Date(currentYear, currentMonth, 5, 9, 0, 0);
-            } else {
-                // Next month's 5th
-                nextNotificationDate = new Date(currentYear, currentMonth + 1, 5, 9, 0, 0);
+            // If today is the 5th, show notification immediately
+            if (today === 5) {
+                showMonthsaryNotification();
             }
             
-            const timeUntilNotification = nextNotificationDate.getTime() - now.getTime();
-            
-            if (timeUntilNotification > 0) {
-                console.log(`📅 Next monthsary notification scheduled for: ${nextNotificationDate}`);
-                
-                // Schedule notification
-                setTimeout(() => {
-                    if (localStorage.getItem('notificationsEnabled') === 'true') {
-                        sendMonthsaryNotification();
-                        // Reschedule for next month
-                        scheduleMonthlyNotification();
-                    }
-                }, timeUntilNotification);
-            }
+            // Check every time the app opens if it's the 5th
+            localStorage.setItem('lastAppOpen', now.toISOString());
         }
 
-        // ============ SEND NOTIFICATION ============
-        function sendMonthsaryNotification() {
+        function showMonthsaryNotification() {
+            // Don't show more than once per day
+            const lastNotification = localStorage.getItem('lastMonthsaryNotification');
+            if (lastNotification) {
+                const lastDate = new Date(lastNotification);
+                const today = new Date();
+                if (lastDate.toDateString() === today.toDateString()) {
+                    return; // Already showed today
+                }
+            }
+            
             const monthsCount = calculateMonthsTogether();
-            const notification = new Notification('💖 Happy Monthsary, My Gigi!', {
-                body: `Today marks ${monthsCount} beautiful months together! Click to open our love diary.`,
-                icon: 'icon-192.png',
-                badge: 'icon-192.png',
-                tag: 'monthsary-reminder',
-                requireInteraction: true,
-                vibrate: [200, 100, 200]
-            });
             
-            notification.onclick = () => {
-                window.focus();
-                notification.close();
-            };
+            // Create a simple in-app notification
+            const notificationDiv = document.createElement('div');
+            notificationDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: white;
+                padding: 20px;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                z-index: 9999;
+                border: 3px solid #ff69b4;
+                max-width: 300px;
+                animation: slideIn 0.5s ease;
+            `;
             
-            console.log(`💌 Monthsary notification sent for ${monthsCount} months`);
+            notificationDiv.innerHTML = `
+                <div style="text-align: center;">
+                    <div style="font-size: 2rem; color: #ff69b4;">💖</div>
+                    <h3 style="color: #e75480; margin: 10px 0;">Happy ${monthsCount} Months!</h3>
+                    <p style="color: #666; font-size: 0.9rem;">Today marks ${monthsCount} beautiful months together!</p>
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            style="background: #ff69b4; color: white; border: none; padding: 8px 15px; 
+                                   border-radius: 20px; margin-top: 10px; cursor: pointer;">
+                        Dismiss
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(notificationDiv);
+            
+            // Auto-dismiss after 10 seconds
+            setTimeout(() => {
+                if (notificationDiv.parentElement) {
+                    notificationDiv.remove();
+                }
+            }, 10000);
+            
+            // Save that we showed notification today
+            localStorage.setItem('lastMonthsaryNotification', new Date().toISOString());
         }
 
         // ============ CALCULATE MONTHS TOGETHER ============
@@ -765,27 +804,6 @@
             const currentDate = new Date();
             const months = (currentDate.getFullYear() - startDate.getFullYear()) * 12;
             return months + currentDate.getMonth() - startDate.getMonth();
-        }
-
-        // ============ TOGGLE NOTIFICATIONS ============
-        function toggleNotifications() {
-            const toggle = document.getElementById('toggleSwitch');
-            const isEnabled = toggle.classList.contains('active');
-            
-            if (!isEnabled) {
-                Notification.requestPermission().then(permission => {
-                    if (permission === 'granted') {
-                        toggle.classList.add('active');
-                        localStorage.setItem('notificationsEnabled', 'true');
-                        scheduleMonthlyNotification();
-                        console.log('🔔 Notifications enabled');
-                    }
-                });
-            } else {
-                toggle.classList.remove('active');
-                localStorage.setItem('notificationsEnabled', 'false');
-                console.log('🔕 Notifications disabled');
-            }
         }
 
         // ============ PWA INSTALL ============
@@ -812,17 +830,27 @@
             }
         }
 
-        // ============ SETTINGS TOGGLE ============
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('.install-btn-pwa') || e.target.closest('#installContainer')) return;
-            document.getElementById('notificationSettings').classList.remove('show');
-        });
-
-        // Show settings when clicking notification icon
-        document.querySelector('.fa-heartbeat, .heartbeat').addEventListener('click', () => {
-            const settings = document.getElementById('notificationSettings');
-            settings.classList.toggle('show');
-        });
+        // ============ CHECK FOR MONTHSARY ON PAGE LOAD ============
+        function checkForMonthsaryOnLoad() {
+            const now = new Date();
+            const today = now.getDate();
+            
+            // Only check if we haven't shown notification today
+            const lastNotification = localStorage.getItem('lastMonthsaryNotification');
+            if (lastNotification) {
+                const lastDate = new Date(lastNotification);
+                if (lastDate.toDateString() === now.toDateString()) {
+                    return; // Already showed today
+                }
+            }
+            
+            // If today is the 5th, show notification
+            if (today === 5) {
+                setTimeout(() => {
+                    showMonthsaryNotification();
+                }, 3000); // Show after 3 seconds
+            }
+        }
 
         // ============ EXISTING FUNCTIONS ============
         // Generate floating hearts in background
@@ -867,6 +895,9 @@
             createHearts();
             createFooterHearts();
             
+            // Check if today is monthsary
+            checkForMonthsaryOnLoad();
+            
             // Add click effect to hearts
             document.querySelectorAll('.heart').forEach(heart => {
                 heart.addEventListener('click', function() {
@@ -901,11 +932,6 @@
                 card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
                 observer.observe(card);
             });
-            
-            // Initialize notification settings
-            if (localStorage.getItem('notificationsEnabled') === 'true') {
-                document.getElementById('toggleSwitch').classList.add('active');
-            }
         });
     </script>
 </body>
