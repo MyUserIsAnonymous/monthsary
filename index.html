@@ -565,7 +565,7 @@
         </section>
 
         <!-- Photo Gallery -->
-        <h2 class="date-heading">5 January 2026</h2>
+        <h2 class="date-heading"><span id="currentDateDisplay">5 January 2026</span></h2>
         <div class="photo-gallery">
             <div class="photo-frame">
                 <img src="6168082918853511972.jpg" alt="Our beautiful memory" onerror="this.src='https://images.unsplash.com/photo-1529254479751-fbacb4c4a250?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80'">
@@ -598,8 +598,8 @@
             </div>
             <div class="timeline-item">
                 <div class="timeline-content">
-                    <div class="timeline-date"><i class="far fa-calendar-alt"></i> Today - 4 Months Together</div>
-                    <p>Every day with you feels like a blessing. I fall in love with you more and more each moment. Happy 4th month, my love!</p>
+                    <div class="timeline-date"><i class="far fa-calendar-alt"></i> Today - <span id="currentMonthsText">4</span> Months Together</div>
+                    <p>Every day with you feels like a blessing. I fall in love with you more and more each moment. Happy <span id="currentMonthsText2">4th</span> month, my love!</p>
                 </div>
             </div>
         </div>
@@ -624,7 +624,7 @@
             <div class="heartbeat"><i class="fas fa-heart"></i></div>
             <p>Made with endless love for my beautiful Gigi</p>
             <p>Every month with you is a treasure ♥</p>
-            <p>Happy 4th Month, my love!</p>
+            <p>Happy <span id="currentMonthsText3">4th</span> Month, my love!</p>
             
             <!-- PWA Status -->
             <div style="margin-top: 20px; font-size: 12px; color: #ff69b4;">
@@ -806,6 +806,72 @@
             return months + currentDate.getMonth() - startDate.getMonth();
         }
 
+        // ============ GET ORDINAL NUMBER (1st, 2nd, 3rd, 4th, etc) ============
+        function getOrdinalNumber(n) {
+            const s = ["th", "st", "nd", "rd"];
+            const v = n % 100;
+            return n + (s[(v - 20) % 10] || s[v] || s[0]);
+        }
+
+        // ============ GET CURRENT MONTHSARY DATE ============
+        function getCurrentMonthsaryDate() {
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth(); // 0-indexed
+            const currentDay = currentDate.getDate();
+            
+            // Determine which 5th to show
+            let monthsaryMonth, monthsaryYear;
+            
+            if (currentDay >= 5) {
+                // We're on or after the 5th, show this month's monthsary
+                monthsaryMonth = currentMonth;
+                monthsaryYear = currentYear;
+            } else {
+                // We're before the 5th, show last month's monthsary
+                monthsaryMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+                monthsaryYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+            }
+            
+            // Format the date
+            const monthNames = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+            
+            return `5 ${monthNames[monthsaryMonth]} ${monthsaryYear}`;
+        }
+
+        // ============ UPDATE ALL MONTH NUMBERS ON THE PAGE ============
+        function updateAllMonthNumbers() {
+            const monthsCount = calculateMonthsTogether();
+            
+            // 1. Update the main counter
+            document.getElementById('monthsCount').textContent = monthsCount;
+            
+            // 2. Get the ordinal number (1st, 2nd, 3rd, etc.)
+            const ordinalMonths = getOrdinalNumber(monthsCount);
+            
+            // 3. Update timeline text
+            document.getElementById('currentMonthsText').textContent = monthsCount;
+            document.getElementById('currentMonthsText2').textContent = ordinalMonths;
+            
+            // 4. Update footer text
+            document.getElementById('currentMonthsText3').textContent = ordinalMonths;
+            
+            // 5. Update the date display
+            document.getElementById('currentDateDisplay').textContent = getCurrentMonthsaryDate();
+            
+            // 6. Update page title
+            document.title = `Happy ${monthsCount} Months, My Gigi! ♥`;
+            
+            // 7. Update header if it's the 5th
+            const today = new Date();
+            if (today.getDate() === 5) {
+                document.querySelector('header h1').textContent = `Happy ${ordinalMonths} Monthsary, My Gigi!`;
+            }
+        }
+
         // ============ PWA INSTALL ============
         let deferredPrompt;
         
@@ -852,6 +918,15 @@
             }
         }
 
+        // ============ PERIODIC UPDATE OF MONTH COUNTER ============
+        function startPeriodicUpdates() {
+            // Update immediately
+            updateAllMonthNumbers();
+            
+            // Update every hour (so it updates on month change)
+            setInterval(updateAllMonthNumbers, 60 * 60 * 1000);
+        }
+
         // ============ EXISTING FUNCTIONS ============
         // Generate floating hearts in background
         function createHearts() {
@@ -889,8 +964,8 @@
 
         // Initialize everything when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            // Update months counter
-            document.getElementById('monthsCount').textContent = calculateMonthsTogether();
+            // Update ALL month numbers automatically
+            startPeriodicUpdates();
             
             createHearts();
             createFooterHearts();
