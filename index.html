@@ -548,51 +548,6 @@
         .toggle-switch.active:after {
             transform: translateX(24px);
         }
-
-        /* ============ MONTHSARY COUNTDOWN ============ */
-        .countdown-card {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px auto;
-            max-width: 400px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.2);
-            border: 2px dashed #ffb6c1;
-        }
-
-        .countdown-card h3 {
-            color: #e75480;
-            margin-bottom: 15px;
-            font-family: 'Dancing Script', cursive;
-            font-size: 2rem;
-        }
-
-        .countdown-timer {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            font-size: 1.5rem;
-            color: #ff69b4;
-        }
-
-        .countdown-unit {
-            background: #fff5f7;
-            padding: 10px;
-            border-radius: 10px;
-            min-width: 60px;
-        }
-
-        .countdown-number {
-            font-weight: bold;
-            font-size: 2rem;
-            display: block;
-        }
-
-        .countdown-label {
-            font-size: 0.8rem;
-            color: #e75480;
-        }
     </style>
 </head>
 <body>
@@ -624,25 +579,7 @@
                 <span id="monthsCount">3</span> Beautiful Months Together
             </div>
             <p>Every moment with you is a precious memory I cherish</p>
-            
-            <!-- Monthsary Countdown -->
-            <div class="countdown-card">
-                <h3>Next Monthsary Countdown</h3>
-                <div class="countdown-timer">
-                    <div class="countdown-unit">
-                        <span class="countdown-number" id="days">0</span>
-                        <span class="countdown-label">Days</span>
-                    </div>
-                    <div class="countdown-unit">
-                        <span class="countdown-number" id="hours">0</span>
-                        <span class="countdown-label">Hours</span>
-                    </div>
-                    <div class="countdown-unit">
-                        <span class="countdown-number" id="minutes">0</span>
-                        <span class="countdown-label">Mins</span>
-                    </div>
-                </div>
-            </div>
+            <!-- COUNTDOWN REMOVED FROM HERE -->
         </header>
 
         <!-- Content Section -->
@@ -800,9 +737,6 @@
                     }
                 }, timeUntilNotification);
             }
-            
-            // Update countdown display
-            updateCountdown(nextNotificationDate);
         }
 
         // ============ SEND NOTIFICATION ============
@@ -831,30 +765,6 @@
             const currentDate = new Date();
             const months = (currentDate.getFullYear() - startDate.getFullYear()) * 12;
             return months + currentDate.getMonth() - startDate.getMonth();
-        }
-
-        // ============ COUNTDOWN TIMER ============
-        function updateCountdown(nextDate) {
-            function update() {
-                const now = new Date();
-                const diff = nextDate - now;
-                
-                if (diff > 0) {
-                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                    
-                    document.getElementById('days').textContent = days;
-                    document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
-                    document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
-                } else {
-                    // If we passed the date, reschedule
-                    scheduleMonthlyNotification();
-                }
-            }
-            
-            update();
-            setInterval(update, 60000); // Update every minute
         }
 
         // ============ TOGGLE NOTIFICATIONS ============
