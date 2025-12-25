@@ -4,9 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Gigi ♥</title>
+    
+    <!-- ============ PWA META TAGS ============ -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#e75480">
+    <link rel="icon" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <!-- ===================================== -->
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
+        /* ... ALL YOUR EXISTING CSS STAYS EXACTLY THE SAME ... */
         * {
             margin: 0;
             padding: 0;
@@ -450,9 +459,161 @@
                 font-size: 2rem;
             }
         }
+
+        /* ============ PWA INSTALL BUTTON ============ */
+        .install-btn-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .install-btn-pwa {
+            background: linear-gradient(135deg, #e75480 0%, #ff69b4 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px;
+            box-shadow: 0 4px 15px rgba(231, 84, 128, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .install-btn-pwa:hover {
+            background: linear-gradient(135deg, #ff69b4 0%, #e75480 100%);
+            transform: translateY(-2px);
+        }
+
+        /* ============ NOTIFICATION SETTINGS ============ */
+        .notification-settings {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            z-index: 999;
+            display: none;
+            border: 2px solid #ffe4e9;
+        }
+
+        .notification-settings.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .toggle-switch {
+            width: 50px;
+            height: 26px;
+            background: #ddd;
+            border-radius: 13px;
+            position: relative;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #ff69b4;
+        }
+
+        .toggle-switch:after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active:after {
+            transform: translateX(24px);
+        }
+
+        /* ============ MONTHSARY COUNTDOWN ============ */
+        .countdown-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px auto;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.2);
+            border: 2px dashed #ffb6c1;
+        }
+
+        .countdown-card h3 {
+            color: #e75480;
+            margin-bottom: 15px;
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+        }
+
+        .countdown-timer {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            color: #ff69b4;
+        }
+
+        .countdown-unit {
+            background: #fff5f7;
+            padding: 10px;
+            border-radius: 10px;
+            min-width: 60px;
+        }
+
+        .countdown-number {
+            font-weight: bold;
+            font-size: 2rem;
+            display: block;
+        }
+
+        .countdown-label {
+            font-size: 0.8rem;
+            color: #e75480;
+        }
     </style>
 </head>
 <body>
+    <!-- PWA Install Button -->
+    <div class="install-btn-container" id="installContainer" style="display:none;">
+        <button class="install-btn-pwa" onclick="installApp()">
+            <i class="fas fa-heart"></i> Install App
+        </button>
+    </div>
+
+    <!-- Notification Settings -->
+    <div class="notification-settings" id="notificationSettings">
+        <div class="notification-toggle" onclick="toggleNotifications()">
+            <div class="toggle-switch" id="toggleSwitch"></div>
+            <span>Monthly Reminders</span>
+        </div>
+        <p style="font-size:12px;color:#666;margin-top:10px;">
+            Get notified every 5th of the month
+        </p>
+    </div>
+
     <div class="container">
         <!-- Header Section -->
         <header>
@@ -463,6 +624,25 @@
                 <span id="monthsCount">3</span> Beautiful Months Together
             </div>
             <p>Every moment with you is a precious memory I cherish</p>
+            
+            <!-- Monthsary Countdown -->
+            <div class="countdown-card">
+                <h3>Next Monthsary Countdown</h3>
+                <div class="countdown-timer">
+                    <div class="countdown-unit">
+                        <span class="countdown-number" id="days">0</span>
+                        <span class="countdown-label">Days</span>
+                    </div>
+                    <div class="countdown-unit">
+                        <span class="countdown-number" id="hours">0</span>
+                        <span class="countdown-label">Hours</span>
+                    </div>
+                    <div class="countdown-unit">
+                        <span class="countdown-number" id="minutes">0</span>
+                        <span class="countdown-label">Mins</span>
+                    </div>
+                </div>
+            </div>
         </header>
 
         <!-- Content Section -->
@@ -485,10 +665,10 @@
         <h2 class="date-heading">5 December 2025</h2>
         <div class="photo-gallery">
             <div class="photo-frame">
-                <img src="6168082918853511972.jpg" alt="Our beautiful memory">
+                <img src="6168082918853511972.jpg" alt="Our beautiful memory" onerror="this.src='https://images.unsplash.com/photo-1529254479751-fbacb4c4a250?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80'">
             </div>
             <div class="photo-frame">
-                <img src="6168082918853511975.jpg" alt="Special moment together">
+                <img src="6168082918853511975.jpg" alt="Special moment together" onerror="this.src='https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80'">
             </div>
         </div>
 
@@ -542,10 +722,199 @@
             <p>Made with endless love for my beautiful Gigi</p>
             <p>Every month with you is a treasure ♥</p>
             <p>Happy 3rd Month, my love!</p>
+            
+            <!-- PWA Status -->
+            <div style="margin-top: 20px; font-size: 12px; color: #ff69b4;">
+                <i class="fas fa-mobile-alt"></i> Install this as an app for monthly reminders
+            </div>
         </footer>
     </div>
 
+    <!-- ============ PWA & NOTIFICATION SCRIPT ============ -->
     <script>
+        // ============ PWA SERVICE WORKER ============
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => {
+                        console.log('✅ Service Worker registered');
+                        checkNotificationPermission();
+                        scheduleMonthlyNotification();
+                    })
+                    .catch(err => console.log('❌ Service Worker failed:', err));
+            });
+        }
+
+        // ============ NOTIFICATION PERMISSION ============
+        function checkNotificationPermission() {
+            if (Notification.permission === 'default') {
+                setTimeout(() => {
+                    if (confirm('Enable monthly monthsary reminders?')) {
+                        Notification.requestPermission().then(permission => {
+                            if (permission === 'granted') {
+                                localStorage.setItem('notificationsEnabled', 'true');
+                                document.getElementById('toggleSwitch').classList.add('active');
+                                console.log('✅ Notifications enabled');
+                                scheduleMonthlyNotification();
+                            }
+                        });
+                    }
+                }, 3000);
+            } else if (Notification.permission === 'granted') {
+                localStorage.setItem('notificationsEnabled', 'true');
+                document.getElementById('toggleSwitch').classList.add('active');
+            }
+        }
+
+        // ============ MONTHLY NOTIFICATION SCHEDULER ============
+        function scheduleMonthlyNotification() {
+            if (Notification.permission !== 'granted') return;
+            
+            const now = new Date();
+            const currentDay = now.getDate();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+            
+            // Calculate next 5th of the month
+            let nextNotificationDate;
+            
+            if (currentDay < 5) {
+                // This month's 5th hasn't passed yet
+                nextNotificationDate = new Date(currentYear, currentMonth, 5, 9, 0, 0);
+            } else {
+                // Next month's 5th
+                nextNotificationDate = new Date(currentYear, currentMonth + 1, 5, 9, 0, 0);
+            }
+            
+            const timeUntilNotification = nextNotificationDate.getTime() - now.getTime();
+            
+            if (timeUntilNotification > 0) {
+                console.log(`📅 Next monthsary notification scheduled for: ${nextNotificationDate}`);
+                
+                // Schedule notification
+                setTimeout(() => {
+                    if (localStorage.getItem('notificationsEnabled') === 'true') {
+                        sendMonthsaryNotification();
+                        // Reschedule for next month
+                        scheduleMonthlyNotification();
+                    }
+                }, timeUntilNotification);
+            }
+            
+            // Update countdown display
+            updateCountdown(nextNotificationDate);
+        }
+
+        // ============ SEND NOTIFICATION ============
+        function sendMonthsaryNotification() {
+            const monthsCount = calculateMonthsTogether();
+            const notification = new Notification('💖 Happy Monthsary, My Gigi!', {
+                body: `Today marks ${monthsCount} beautiful months together! Click to open our love diary.`,
+                icon: 'icon-192.png',
+                badge: 'icon-192.png',
+                tag: 'monthsary-reminder',
+                requireInteraction: true,
+                vibrate: [200, 100, 200]
+            });
+            
+            notification.onclick = () => {
+                window.focus();
+                notification.close();
+            };
+            
+            console.log(`💌 Monthsary notification sent for ${monthsCount} months`);
+        }
+
+        // ============ CALCULATE MONTHS TOGETHER ============
+        function calculateMonthsTogether() {
+            const startDate = new Date(2025, 8, 5); // September 5, 2025
+            const currentDate = new Date();
+            const months = (currentDate.getFullYear() - startDate.getFullYear()) * 12;
+            return months + currentDate.getMonth() - startDate.getMonth();
+        }
+
+        // ============ COUNTDOWN TIMER ============
+        function updateCountdown(nextDate) {
+            function update() {
+                const now = new Date();
+                const diff = nextDate - now;
+                
+                if (diff > 0) {
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    
+                    document.getElementById('days').textContent = days;
+                    document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+                    document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+                } else {
+                    // If we passed the date, reschedule
+                    scheduleMonthlyNotification();
+                }
+            }
+            
+            update();
+            setInterval(update, 60000); // Update every minute
+        }
+
+        // ============ TOGGLE NOTIFICATIONS ============
+        function toggleNotifications() {
+            const toggle = document.getElementById('toggleSwitch');
+            const isEnabled = toggle.classList.contains('active');
+            
+            if (!isEnabled) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        toggle.classList.add('active');
+                        localStorage.setItem('notificationsEnabled', 'true');
+                        scheduleMonthlyNotification();
+                        console.log('🔔 Notifications enabled');
+                    }
+                });
+            } else {
+                toggle.classList.remove('active');
+                localStorage.setItem('notificationsEnabled', 'false');
+                console.log('🔕 Notifications disabled');
+            }
+        }
+
+        // ============ PWA INSTALL ============
+        let deferredPrompt;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installContainer').style.display = 'block';
+            console.log('📱 PWA ready to install');
+        });
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('✅ App installed');
+                        document.getElementById('installContainer').innerHTML = 
+                            '<div style="background:#e75480;color:white;padding:10px 20px;border-radius:50px;">✅ Installed!</div>';
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+
+        // ============ SETTINGS TOGGLE ============
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.install-btn-pwa') || e.target.closest('#installContainer')) return;
+            document.getElementById('notificationSettings').classList.remove('show');
+        });
+
+        // Show settings when clicking notification icon
+        document.querySelector('.fa-heartbeat, .heartbeat').addEventListener('click', () => {
+            const settings = document.getElementById('notificationSettings');
+            settings.classList.toggle('show');
+        });
+
+        // ============ EXISTING FUNCTIONS ============
         // Generate floating hearts in background
         function createHearts() {
             const heartsContainer = document.getElementById('heartsContainer');
@@ -582,6 +951,9 @@
 
         // Initialize everything when page loads
         document.addEventListener('DOMContentLoaded', function() {
+            // Update months counter
+            document.getElementById('monthsCount').textContent = calculateMonthsTogether();
+            
             createHearts();
             createFooterHearts();
             
@@ -619,6 +991,11 @@
                 card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
                 observer.observe(card);
             });
+            
+            // Initialize notification settings
+            if (localStorage.getItem('notificationsEnabled') === 'true') {
+                document.getElementById('toggleSwitch').classList.add('active');
+            }
         });
     </script>
 </body>
